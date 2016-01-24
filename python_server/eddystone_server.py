@@ -1,5 +1,9 @@
 import subprocess
 
+# UUID: 8ee47bda-8180-4152-9986-a516b7001c56
+NAMESPACE_ID = [0x8e, 0xe4, 0x7b, 0xda, 0x81, 0x80, 0x41, 0x52, 0x99, 0x86]
+INSTANCE_ID = [0xa5, 0x16, 0xb7, 0x00, 0x1c, 0x56]
+
 
 def system_call(command):
     child = subprocess.Popen(
@@ -31,9 +35,6 @@ def set_advertising_message(message):
 
     # Concatenate all the hex strings, separated by spaces
     message = " ".join(message)
-
-    print "message:", message
-
     system_call("sudo hcitool -i hci0 cmd 0x08 0x0008 " + message)
 
 
@@ -67,5 +68,4 @@ def set_eddystone_uid(ranging_data, namespace_id, beacon_id):
         ranging_data  # tx power
     ]
     message.extend(payload)
-    print("uid message:", message)
     set_advertising_message(message)
