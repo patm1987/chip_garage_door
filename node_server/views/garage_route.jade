@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1= title
+    if garage.isDoorOpen()
+        p Garage is Open!
+    else
+        p Garage is Closed!
+    p #[a(href="garage/toggle") Toggle Door]
