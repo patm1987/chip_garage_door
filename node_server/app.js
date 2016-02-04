@@ -9,6 +9,10 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var garage_route = require('./routes/garage_route');
 
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var keys = require('./keys.json');
+
 var app = express();
 
 // view engine setup
@@ -22,6 +26,43 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
+
+passport.use(new GoogleStrategy(
+    {
+        clientID: keys.google_key,
+        clientSecret: keys.google_secret,
+        callbackURL: 'http://localhost:3000/login/callback'
+    },
+    function (token, refreshToken, profile, done) {
+        return done(null, {
+            id: profile.id,
+            name: profile.displayName,
+            email: profile.emails[0].value
+        })
+    }
+));
+
+app.get('/login', passport.authenticate('google', {scope: ['profile']}), function (req, res) {
+    console.log(req);
+});
+app.get(
+    '/login/callback',
+    passport.authenticate('google', {
+        successRedirect: '/garage',
+        failureRedirect: '/'
+    })
+);
 
 app.use('/', routes);
 app.use('/users', users);

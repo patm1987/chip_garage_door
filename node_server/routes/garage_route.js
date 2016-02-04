@@ -23,6 +23,12 @@ router.get('/', render_garage);
 router.get('/toggle', function(req, res, next) {
     garage_control.toggleDoor();
     res.redirect(req.baseUrl);
+
+    var authId = req.query.authId;
+    console.log('auth id: ' + authId);
+    authClient.authorize(function(err, tokens) {
+
+    })
 });
 
 module.exports = router;

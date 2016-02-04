@@ -4,7 +4,7 @@ html
         title= title
         link(rel='stylesheet', href='/stylesheets/style.css')
         meta(name= "google-signin-scope", content= "profile email")
-        meta(name= "google-signin-client_id" content= "#{client_id}.apps.googleusercontent.com")
+        meta(name= "google-signin-client_id" content= client_id)
         script(src="https://apis.google.com/js/platform.js", async, defer)
     body
         h1= title
@@ -18,11 +18,11 @@ html
                 console.log("Email: " + profile.getEmail());
 
                 var id_token = googleUser.getAuthResponse().id_token;
-                console.log("ID Token: " + id_token);
+                document.getElementById("toggle_link").href="garage/toggle?authId=".concat(id_token)
             }
 
         if garage.isDoorOpen()
             p Garage is Open!
         else
             p Garage is Closed!
-        p #[a(href="garage/toggle") Toggle Door]
+        p #[a#toggle_link(href="garage/toggle") Toggle Door]
