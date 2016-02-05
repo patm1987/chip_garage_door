@@ -14,6 +14,7 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "passport": "latest",
-    "passport-google-oauth20": "latest"
+    "passport-google-oauth20": "latest",
+    "sqlite3": "latest"
   }
 }

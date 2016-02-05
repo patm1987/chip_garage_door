@@ -6,12 +6,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var garage_route = require('./routes/garage_route');
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var keys = require('./keys.json');
+var Users = require('./models/Users');
+var users = new Users();
 
 var app = express();
 
@@ -31,11 +32,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function (user, done) {
-    done(null, user);
+    done(null, user.id);
 });
 
 passport.deserializeUser(function (user, done) {
-    done(null, user);
+    var found_user = users.get_user(user);
+    if (found_user = null) {
+        return done("Couldn't find user", null);
+    }
+    else {
+        return found_user;
+    }
 });
 
 passport.use(new GoogleStrategy(
@@ -45,11 +52,15 @@ passport.use(new GoogleStrategy(
         callbackURL: 'http://localhost:3000/login/callback'
     },
     function (token, refreshToken, profile, done) {
-        return done(null, {
-            id: profile.id,
-            name: profile.displayName,
-            email: profile.emails[0].value
-        })
+        process.nextTick(function(){
+            var found_user = users.get_user(profile.id);
+            if (found_user) {
+                return done(null, found_user);
+            }
+            else {
+                return done(null, users.add_user(profile.id, profile.emails[0].value, profile.name));
+            }
+        });
     }
 ));
 
@@ -67,7 +78,6 @@ app.get(
 );
 
 app.use('/', routes);
-app.use('/users', users);
 app.use('/garage', garage_route);
 
 // catch 404 and forward to error handler
