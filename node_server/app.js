@@ -10,7 +10,7 @@ var users = require('./routes/users');
 var garage_route = require('./routes/garage_route');
 
 var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var keys = require('./keys.json');
 
 var app = express();
@@ -53,15 +53,15 @@ passport.use(new GoogleStrategy(
     }
 ));
 
-app.get('/login', passport.authenticate('google', {scope: ['profile']}), function (req, res) {
+app.get('/login', passport.authenticate('google', {scope: ['profile', 'email']}), function (req, res) {
     console.log(req);
 });
 app.get(
     '/login/callback',
-    passport.authenticate('google', {
-        successRedirect: '/garage',
-        failureRedirect: '/'
-    })
+    passport.authenticate('google', {failureRedirect: '/'}),
+    function(req, res) {
+        res.redirect('/garage');
+    }
 );
 
 app.use('/', routes);
