@@ -53,6 +53,8 @@ passport.use(new GoogleStrategy(
     }
 ));
 
+garage_route.set_passport(passport);
+
 app.get('/login', passport.authenticate('google', {scope: ['profile', 'email']}), function (req, res) {
     console.log(req);
 });

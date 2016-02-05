@@ -8,13 +8,16 @@ var router = express.Router();
 var garage_control = require("../garage_control");
 var keys = require('../keys.json');
 
+var passport = null;
+
 function render_garage(req, res, next) {
     res.render(
         'garage_route',
         {
             title: 'Garage Control Center',
             garage: garage_control,
-            client_id: keys.google_key
+            client_id: keys.google_key,
+            authenticated: req.isAuthenticated()
         });
 }
 
@@ -23,12 +26,10 @@ router.get('/', render_garage);
 router.get('/toggle', function(req, res, next) {
     garage_control.toggleDoor();
     res.redirect(req.baseUrl);
-
-    var authId = req.query.authId;
-    console.log('auth id: ' + authId);
-    authClient.authorize(function(err, tokens) {
-
-    })
 });
+
+router.set_passport = function (new_passport) {
+    passport = new_passport
+};
 
 module.exports = router;

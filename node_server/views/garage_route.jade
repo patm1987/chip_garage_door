@@ -9,4 +9,8 @@ html
             p Garage is Open!
         else
             p Garage is Closed!
-        p #[a#toggle_link(href="garage/toggle") Toggle Door]
+        p #[a(href="garage/toggle") Toggle Door]
+        if authenticated
+            p Authenticated!
+        else
+            p #[a(href="login") Please Authenticate]
