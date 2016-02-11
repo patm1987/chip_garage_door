@@ -58,7 +58,8 @@ passport.use(new GoogleStrategy(
                 return done(null, found_user);
             }
             else {
-                return done(null, users.add_user(profile.id, profile.emails[0].value, profile.name));
+                var name = profile.name.givenName + " " + profile.name.familyName;
+                return done(null, users.add_user(profile.id, profile.emails[0].value, name));
             }
         });
     }

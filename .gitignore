@@ -2,3 +2,5 @@ node_server/node_modules/
 node_server/.idea/workspace.xml
 python_server/.idea/workspace.xml
 node_server/keys.json
+node_server/.idea/runConfigurations/
+node_server/models/users_db
