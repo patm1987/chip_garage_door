@@ -8,6 +8,7 @@ var session = require('express-session');
 
 var routes = require('./routes/index');
 var garage_route = require('./routes/garage_route');
+var not_authenticated_route = require('./routes/not_authenticated');
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -84,6 +85,7 @@ app.get(
 
 app.use('/', routes);
 app.use('/garage', garage_route);
+app.use('/not_authenticated', not_authenticated_route);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

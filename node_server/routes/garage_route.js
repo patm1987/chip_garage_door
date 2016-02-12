@@ -24,8 +24,13 @@ function render_garage(req, res, next) {
 router.get('/', render_garage);
 
 router.get('/toggle', function(req, res, next) {
-    garage_control.toggleDoor();
-    res.redirect(req.baseUrl);
+    if (req.isAuthenticated()) {
+        garage_control.toggleDoor();
+        res.redirect(req.baseUrl);
+    }
+    else {
+        res.redirect('/not_authenticated');
+    }
 });
 
 router.set_passport = function (new_passport) {
