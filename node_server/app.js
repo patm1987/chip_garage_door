@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var routes = require('./routes/index');
 var garage_route = require('./routes/garage_route');
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({secret: 'supersecretsessionkey'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -35,14 +37,15 @@ passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-passport.deserializeUser(function (user, done) {
-    var found_user = users.get_user(user);
-    if (found_user = null) {
-        return done("Couldn't find user", null);
-    }
-    else {
-        return found_user;
-    }
+passport.deserializeUser(function (id, done) {
+    users.get_user(id, function(user){
+        if (user == null) {
+            done("Couldn't find user", null);
+        }
+        else {
+            done(null, user);
+        }
+    });
 });
 
 passport.use(new GoogleStrategy(
@@ -53,14 +56,15 @@ passport.use(new GoogleStrategy(
     },
     function (token, refreshToken, profile, done) {
         process.nextTick(function(){
-            var found_user = users.get_user(profile.id);
-            if (found_user) {
-                return done(null, found_user);
-            }
-            else {
-                var name = profile.name.givenName + " " + profile.name.familyName;
-                return done(null, users.add_user(profile.id, profile.emails[0].value, name));
-            }
+            users.get_user(profile.id, function(user){
+                if (user) {
+                    return done(null, user);
+                }
+                else {
+                    var name = profile.name.givenName + " " + profile.name.familyName;
+                    return done(null, users.add_user(profile.id, profile.emails[0].value, name));
+                }
+            });
         });
     }
 ));

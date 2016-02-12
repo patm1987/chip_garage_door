@@ -3,17 +3,20 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('./models/users_db');
 
 var users = function() {
-    this.get_user = function (user_id) {
-        db.get('SELECT * FROM users WHERE id=?', function(err, row){
-            if (err || !row) {
-                return null;
+    this.get_user = function (user_id, callback) {
+        db.all('SELECT * FROM users WHERE id=?', user_id, function(err, rows){
+            if (err || !rows || rows.length == 0) {
+                callback(null);
             }
-            console.log('Got ' + row);
-            return {
-                id: row.id,
-                email: row.email,
-                name: row.name
-            };
+            else {
+                var row = rows[0];
+                console.log('Got ' + row);
+                callback({
+                    id: row.id,
+                    email: row.email,
+                    name: row.name
+                });
+            }
         });
     };
 
