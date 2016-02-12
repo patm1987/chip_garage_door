@@ -3,14 +3,20 @@ html
     head
         title= title
         link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
+        link(rel="stylesheet", href="https://code.getmdl.io/1.1.1/material.indigo-pink.min.css")
+        script(src="https://code.getmdl.io/1.1.1/material.min.js", defer)
     body
         h1= title
-        if garage.isDoorOpen()
-            p Garage is Open!
-        else
-            p Garage is Closed!
-        p #[a(href="garage/toggle") Toggle Door]
         if authenticated
-            p Authenticated!
+            if garage.isDoorOpen()
+                p Garage is Open!
+            else
+                p Garage is Closed!
+            a(href="garage/toggle")
+                button(class=["mdl-button", "mdl-js-button", "mdl-button--raised mdl-js-ripple-effect", "mdl-button--accent"])
+                    | Toggle Door
         else
-            p #[a(href="login") Please Authenticate]
+            a(href="login")
+                button(class=["mdl-button", "mdl-js-button", "mdl-button--raised mdl-js-ripple-effect", "mdl-button--accent"])
+                    | Authenticate with Google
